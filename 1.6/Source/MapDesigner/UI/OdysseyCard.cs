@@ -64,23 +64,27 @@ namespace MapDesigner.UI
             {
                 Log.Message("Making dropdown for " + cat);
 
-                List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c== cat)).ToList();
+                //List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c== cat)).ToList();
 
-                if(outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat)))
+                //if(outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
+                if (outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
                 {
-                    //TODO: Dropdown options, and display list
-                    List<FloatMenuOption> mutList = new List<FloatMenuOption>();
-                    foreach(TileMutatorDef mut in catMuts)
-                    {
-                        mutList.Add(new FloatMenuOption(mut.label, delegate
-                        {
-                            AddSelectedMutator(mut);
-                            HelperMethods.InvokeOnSettingsChanged();
-                        }));
-                    }
-
-                    Find.WindowStack.Add(new FloatMenu(mutList));
+                    Log.Message("Clicked button for " + cat);
                 }
+                //{
+                //TODO: Dropdown options, and display list
+                //List<FloatMenuOption> mutList = new List<FloatMenuOption>();
+                //foreach(TileMutatorDef mut in catMuts)
+                //{
+                //    mutList.Add(new FloatMenuOption(mut.label, delegate
+                //    {
+                //        AddSelectedMutator(mut);
+                //        HelperMethods.InvokeOnSettingsChanged();
+                //    }));
+                //}
+
+                    //Find.WindowStack.Add(new FloatMenu(mutList));
+                    //}
             }
 
 
@@ -90,23 +94,26 @@ namespace MapDesigner.UI
         }
 
 
-        public static string GetSelectedMutatorByCategory(string cat)
+        public static TileMutatorDef GetSelectedMutatorByCategory(string cat)
         {
             // gets the currently selected mutator for a given category, if any
-            foreach(string mut in settings.selectedMutators)
+            Log.Message("Getting mutator for category " + cat);
+            if (!settings.selectedMutators.NullOrEmpty())
             {
-                if (DefDatabase<TileMutatorDef>.GetNamedSilentFail(mut).categories.Any(c => c == cat))
+                if (settings.selectedMutators.Any(m => m.categories.Contains(cat)))
                 {
-                    return mut;
+                    return settings.selectedMutators.Where(m => m.categories.Contains(cat)).FirstOrDefault();
                 }
             }
-            return "ZMD_odyNoFeature".Translate();
+           
+            Log.Message("No mutator found, returning DEFAULT");
+            return ZmdDefOf.ZMD_NoMutator;
         }
 
         public static void AddSelectedMutator(TileMutatorDef newMut)
         {
             //remove any conflicting mutators, then add the new one
-            List<TileMutatorDef> muts = GetSelectedMutators();
+            List<TileMutatorDef> muts = settings.selectedMutators;
 
             //remove all mutators with the same category
             muts.RemoveAll(m => m.categories.Intersect(newMut.categories).Any());
@@ -116,21 +123,9 @@ namespace MapDesigner.UI
 
             muts.Add(newMut);
 
-            List<string> mutDefNames = muts.Select(m => m.defName).ToList();
-            settings.selectedMutators = mutDefNames;
+            settings.selectedMutators = muts;
         }
 
-        public static List<TileMutatorDef> GetSelectedMutators()
-        {
-            List<TileMutatorDef> list = new List<TileMutatorDef>();
-
-            foreach(string mut in settings.selectedMutators)
-            {
-                list.Add(DefDatabase<TileMutatorDef>.GetNamedSilentFail(mut));
-            }
-
-            return list;
-        }
 
         public static void DisableAllMutators()
         {

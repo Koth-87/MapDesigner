@@ -124,6 +124,7 @@
     <Compile Include="UI\RockSelectionDialog.cs" />
     <Compile Include="UI\ThingsCard.cs" />
     <Compile Include="Feature\Lake.cs" />
+    <Compile Include="ZmdDefOf.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

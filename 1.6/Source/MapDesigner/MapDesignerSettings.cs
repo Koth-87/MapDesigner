@@ -124,7 +124,7 @@ namespace MapDesigner
         public float pollutionLevel = 1f;
 
         //Odyssey
-        public List<string> selectedMutators = new List<string>();
+        public List<TileMutatorDef> selectedMutators = new List<TileMutatorDef>();
 
         // Medieval Overhaul
         public float densityMOBattlefield = 1f;
