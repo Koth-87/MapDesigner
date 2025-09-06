@@ -324,8 +324,8 @@
 	
 <!-- ===================================	Odyssey	================================= -->
 <ZMD_odysseyTab>Odyssey</ZMD_odysseyTab>
-<ZMD_odysseyTabInfo>Enable or disable special features. This will apply ONLY to your home map.\n\nFeatures are sorted into one or more categories. You can max 1 from each category. Some features may be part of multiple categories.\n\nSome features may require existing features to work: for example, river/coast features require that your tile start with a river/coast.\n\nTHIS TAB IS IN BETA</ZMD_odysseyTabInfo>
-<ZMD_odyNoFeature></ZMD_odyNoFeature>
+<ZMD_odysseyTabInfo>Enable or disable special features. This will apply ONLY to your home map.\n\nYou can select max 1 from each category. Some features may be part of multiple categories.\n\nSome features may require existing features to work: for example, river/coast features require that your tile start with a river/coast.</ZMD_odysseyTabInfo>
+<ZMD_betaWarning>THIS TAB IS IN BETA</ZMD_betaWarning>
 <ZMD_categories>Categories: </ZMD_categories>
 <ZMD_disableMutators>Disable All</ZMD_disableMutators>
 

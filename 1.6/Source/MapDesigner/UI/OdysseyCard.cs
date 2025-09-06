@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.Noise;
 
 namespace MapDesigner.UI
 {
@@ -35,6 +36,10 @@ namespace MapDesigner.UI
 
             outerListing.Label("ZMD_odysseyTabInfo".Translate());
 
+            GUI.color = new Color(255, 180, 0);
+            outerListing.Label("ZMD_betaWarning".Translate());
+            GUI.color = Color.white;
+
             if (outerListing.ButtonText("ZMD_disableMutators".Translate()))
             {
                 DisableAllMutators();
@@ -42,10 +47,8 @@ namespace MapDesigner.UI
 
             // get the list of mutators
             List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
-            Log.Message("All Mutators gathered. Count: " + allMutators.Count);
             //get the list of categories
             List<string> allCategories = new List<string>();
-            Log.Message("CATEGORIES:");
             foreach (TileMutatorDef item in allMutators)
             {
                 foreach (string cat in item.categories)
@@ -59,15 +62,22 @@ namespace MapDesigner.UI
             }
             allCategories.SortBy(c => c);
 
-            //make the dropdown menus
-            foreach(string cat in allCategories)
-            {
-                Log.Message("Making dropdown for " + cat);
+            //make the scroll window
+            Rect windowRect = outerListing.GetRect(rect2.height - outerListing.CurHeight).ContractedBy(4f);
 
+            Rect viewRect = new Rect(0f, 0f, 400f, 100f + 29f * allCategories.Count());
+
+            Widgets.BeginScrollView(windowRect, ref scrollPosition, viewRect, true);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+            //make the dropdown menus
+            foreach (string cat in allCategories)
+            {
                 //List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c== cat)).ToList();
 
                 //if(outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
-                if (outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
+                if (listing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
                 {
                     Log.Message("Clicked button for " + cat);
                 }
@@ -87,8 +97,8 @@ namespace MapDesigner.UI
                     //}
             }
 
-
-
+            listing.End();
+            Widgets.EndScrollView();
             outerListing.End();
             HelperMethods.EndChangeCheck();
         }
