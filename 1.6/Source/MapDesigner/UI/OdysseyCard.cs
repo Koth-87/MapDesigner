@@ -47,6 +47,7 @@ namespace MapDesigner.UI
 
             // get the list of mutators
             List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
+
             //get the list of categories
             List<string> allCategories = new List<string>();
             foreach (TileMutatorDef item in allMutators)
@@ -55,11 +56,11 @@ namespace MapDesigner.UI
                 {
                     if (!allCategories.Contains(cat))
                     {
-                        Log.Message(cat);
                         allCategories.Add(cat);
                     }
                 }
             }
+
             allCategories.SortBy(c => c);
 
             //make the scroll window
@@ -71,30 +72,28 @@ namespace MapDesigner.UI
 
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(viewRect);
+
             //make the dropdown menus
             foreach (string cat in allCategories)
             {
-                //List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c== cat)).ToList();
+                List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c == cat)).ToList();
 
-                //if(outerListing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
                 if (listing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
                 {
-                    Log.Message("Clicked button for " + cat);
+                    List<FloatMenuOption> mutOptionList = new List<FloatMenuOption>();
+                    foreach (TileMutatorDef mut in catMuts)
+                    {
+                        mutOptionList.Add(new FloatMenuOption(mut.label, delegate
+                        {
+                            //AddSelectedMutator(mut);
+                            settings.selectedMutators[cat] = mut;
+                            HelperMethods.InvokeOnSettingsChanged();
+                            SyncSelectedMutators(mut);
+                        }));
+                    }
+                    Find.WindowStack.Add(new FloatMenu(mutOptionList));
                 }
-                //{
-                //TODO: Dropdown options, and display list
-                //List<FloatMenuOption> mutList = new List<FloatMenuOption>();
-                //foreach(TileMutatorDef mut in catMuts)
-                //{
-                //    mutList.Add(new FloatMenuOption(mut.label, delegate
-                //    {
-                //        AddSelectedMutator(mut);
-                //        HelperMethods.InvokeOnSettingsChanged();
-                //    }));
-                //}
-
-                    //Find.WindowStack.Add(new FloatMenu(mutList));
-                    //}
+                
             }
 
             listing.End();
@@ -104,36 +103,50 @@ namespace MapDesigner.UI
         }
 
 
+        public static void SyncSelectedMutators(TileMutatorDef mut)
+        {
+            // everything syncs to the newly selected mutator
+            foreach (string c in mut.categories)
+            {
+                settings.selectedMutators[c] = mut;
+            }
+
+            //foreach(KeyValuePair<string,TileMutatorDef> entry in settings.selectedMutators)
+            //{
+            //    if(entry.Value.categories.Any(cat => mut.categories.Contains(cat)))
+            //    {
+            //        settings.selectedMutators[entry.Key] = ZmdDefOf.ZMD_NoMutator;
+            //    }
+            //}
+
+
+            foreach (string c in mut.overrideCategories)
+            {
+                if (settings.selectedMutators[c].categories.Any(cat => mut.categories.Contains(cat)))
+                settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator;
+            }
+
+
+            // remove mutatores that conflict with override categories
+            foreach (string c in mut.overrideCategories)
+            {
+                settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator;
+            }
+        }
+
+
         public static TileMutatorDef GetSelectedMutatorByCategory(string cat)
         {
             // gets the currently selected mutator for a given category, if any
-            Log.Message("Getting mutator for category " + cat);
             if (!settings.selectedMutators.NullOrEmpty())
             {
-                if (settings.selectedMutators.Any(m => m.categories.Contains(cat)))
+                if (settings.selectedMutators.ContainsKey(cat))
                 {
-                    return settings.selectedMutators.Where(m => m.categories.Contains(cat)).FirstOrDefault();
+                    return settings.selectedMutators[cat];
                 }
             }
            
-            Log.Message("No mutator found, returning DEFAULT");
             return ZmdDefOf.ZMD_NoMutator;
-        }
-
-        public static void AddSelectedMutator(TileMutatorDef newMut)
-        {
-            //remove any conflicting mutators, then add the new one
-            List<TileMutatorDef> muts = settings.selectedMutators;
-
-            //remove all mutators with the same category
-            muts.RemoveAll(m => m.categories.Intersect(newMut.categories).Any());
-
-            //remove everything that conflicts with overrideCategories
-            muts.RemoveAll(m => m.overrideCategories.Intersect(newMut.categories).Any());
-
-            muts.Add(newMut);
-
-            settings.selectedMutators = muts;
         }
 
 
@@ -142,7 +155,6 @@ namespace MapDesigner.UI
             settings.selectedMutators.Clear();
             HelperMethods.InvokeOnSettingsChanged();
         }
-
 
 
     }

@@ -196,7 +196,43 @@ namespace MapDesigner
             settings.riverDefaults = rivers;
 
 
-            
+            // Odyssey
+            if (ModsConfig.OdysseyActive)
+            {
+                try
+                {
+                    if (settings.selectedMutators.EnumerableNullOrEmpty())
+                    {
+                        settings.selectedMutators = new Dictionary<string, TileMutatorDef>();
+                    }
+
+                    List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
+
+                    List<string> allCategories = new List<string>();
+                    foreach (TileMutatorDef item in allMutators)
+                    {
+                        foreach (string cat in item.categories)
+                        {
+                            if (!allCategories.Contains(cat))
+                            {
+                                allCategories.Add(cat);
+                            }
+                        }
+                    }
+
+                    foreach (string cat in allCategories)
+                    {
+                        if (!settings.selectedMutators.ContainsKey(cat))
+                        {
+                            settings.selectedMutators.Add(cat, ZmdDefOf.ZMD_NoMutator);
+                        }
+                    }
+                }
+                catch
+                {
+                    Log.Message("[Map Designer] Could not initialize Odyssey mutators");
+                }
+            }
         }
 
 

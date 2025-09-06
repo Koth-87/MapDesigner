@@ -123,8 +123,8 @@ namespace MapDesigner
         public float densityPoluxTrees = 1f;
         public float pollutionLevel = 1f;
 
-        //Odyssey
-        public List<TileMutatorDef> selectedMutators = new List<TileMutatorDef>();
+        // Odyssey
+        public Dictionary<string, TileMutatorDef> selectedMutators = new Dictionary<string, TileMutatorDef>();
 
         // Medieval Overhaul
         public float densityMOBattlefield = 1f;
@@ -268,6 +268,7 @@ namespace MapDesigner
 
                 "oreCommonality",           // oreCommonality and allowedRocks are dictionaries that get special handling
                 "allowedRocks",
+                "selectedMutators",
 
                 "vpe_HelixienVents",        // these settings are defunt and no longer supported, but may appear in older configs
                 "vpe_ChemfuelPonds"
@@ -282,6 +283,10 @@ namespace MapDesigner
                 {
                     configString += field.Name + "=" + HelperMethods.DictToString((Dictionary<string, bool>)field.GetValue(MapDesignerMod.mod.settings));
                 }
+                //else if (field.Name == "selectedMutators")
+                //{
+                //    configString += field.Name + "=" + HelperMethods.DictToString((Dictionary<string, bool>)field.GetValue(MapDesignerMod.mod.settings));
+                //}
                 else if(!toIgnore.Contains(field.Name))
                 {
                     configString += field.Name + "=" + field.GetValue(MapDesignerMod.mod.settings).ToString() + ";";
@@ -471,7 +476,7 @@ namespace MapDesigner
             Scribe_Values.Look(ref pollutionLevel, "pollutionLevel", 1f);
 
             // Odyssey
-            Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value);
+            Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value, LookMode.Def);
 
 
             // Medieval Overhaul
