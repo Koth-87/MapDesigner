@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using MapDesigner.UI;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,20 @@ namespace MapDesigner.Patches
         {
             HelperMethods.ApplyBiomeSettings();
             MapGenSize.mapgensize = map.Size;
+
+
+            // MUTATORS
+            if (ModsConfig.OdysseyActive)
+            {
+                if (map.IsPlayerHome)
+                {
+                    Log.Message("Try ADd Mutator");
+                    //map.Tile.Tile.AddMutator(TileMutatorDefOf.Coast);
+
+                    //map.Tile.Tile.AddMutator(TileMutatorDefOf.RiverDelta);
+
+                }
+            }
         }
 
 

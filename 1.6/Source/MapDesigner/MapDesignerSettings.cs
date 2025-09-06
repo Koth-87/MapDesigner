@@ -123,6 +123,9 @@ namespace MapDesigner
         public float densityPoluxTrees = 1f;
         public float pollutionLevel = 1f;
 
+        //Odyssey
+        public List<string> selectedMutators = new List<string>();
+
         // Medieval Overhaul
         public float densityMOBattlefield = 1f;
         public float densityMOTarPit = 1f;
@@ -466,6 +469,10 @@ namespace MapDesigner
             Scribe_Values.Look(ref densityAncientPollutionJunk, "densityAncientPollutionJunk", 1f);
             Scribe_Values.Look(ref densityPoluxTrees, "densityPoluxTrees", 1f);
             Scribe_Values.Look(ref pollutionLevel, "pollutionLevel", 1f);
+
+            // Odyssey
+            Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value);
+
 
             // Medieval Overhaul
             Scribe_Values.Look(ref densityMOBattlefield, "densityMOBattlefield", 1f);

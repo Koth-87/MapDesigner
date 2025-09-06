@@ -19,6 +19,7 @@ namespace MapDesigner
             Things,
             Rivers,
             //Feature,
+            Odyssey,
         }
         private MapDesignerMod.InfoCardTab tab;
 
@@ -84,6 +85,15 @@ namespace MapDesigner
             }, this.tab == MapDesignerMod.InfoCardTab.Rivers);
             list.Add(riverTab);
 
+            if (ModsConfig.OdysseyActive)
+            {
+                TabRecord odyTab = new TabRecord("ZMD_odysseyTab".Translate(), delegate
+                {
+                    this.tab = MapDesignerMod.InfoCardTab.Odyssey;
+                }, this.tab == MapDesignerMod.InfoCardTab.Odyssey);
+                list.Add(odyTab);
+            }
+
             //TabRecord featureTab = new TabRecord("ZMD_featureTab".Translate(), delegate
             //{
             //    this.tab = MapDesignerMod.InfoCardTab.Feature;
@@ -122,7 +132,9 @@ namespace MapDesigner
                 //case MapDesignerMod.InfoCardTab.Feature:
                 //    UI.FeatureCard.DrawFeaturesCard(cardRect);
                 //    break;
-
+                case MapDesignerMod.InfoCardTab.Odyssey:
+                    UI.OdysseyCard.DrawOdysseyCard(cardRect);
+                    break;
                 default:
                     tab = MapDesignerMod.InfoCardTab.General;
                     //UI.GeneralCardUtility.DrawGeneralCard(cardRect);
