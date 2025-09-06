@@ -105,27 +105,38 @@ namespace MapDesigner.UI
 
         public static void SyncSelectedMutators(TileMutatorDef mut)
         {
+            //// get the list of mutators
+            //List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
+
+            ////get the list of categories
+            //List<string> allCategories = new List<string>();
+            //foreach (TileMutatorDef item in allMutators)
+            //{
+            //    foreach (string cat in item.categories)
+            //    {
+            //        if (!allCategories.Contains(cat))
+            //        {
+            //            allCategories.Add(cat);
+            //        }
+            //    }
+            //}
+
+            //// disable mutators with conflicting categories
+            //foreach (string cat in allCategories)
+            //{
+            //    if (settings.selectedMutators[cat].categories.Any(e => mut.categories.Contains(e)))
+            //    {
+            //        settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator;
+
+            //    }
+
+            //}
+
             // everything syncs to the newly selected mutator
             foreach (string c in mut.categories)
             {
                 settings.selectedMutators[c] = mut;
             }
-
-            //foreach(KeyValuePair<string,TileMutatorDef> entry in settings.selectedMutators)
-            //{
-            //    if(entry.Value.categories.Any(cat => mut.categories.Contains(cat)))
-            //    {
-            //        settings.selectedMutators[entry.Key] = ZmdDefOf.ZMD_NoMutator;
-            //    }
-            //}
-
-
-            foreach (string c in mut.overrideCategories)
-            {
-                if (settings.selectedMutators[c].categories.Any(cat => mut.categories.Contains(cat)))
-                settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator;
-            }
-
 
             // remove mutatores that conflict with override categories
             foreach (string c in mut.overrideCategories)
