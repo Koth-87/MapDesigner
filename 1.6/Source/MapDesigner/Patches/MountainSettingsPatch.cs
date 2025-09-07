@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -27,13 +28,27 @@ namespace MapDesigner.Patches
             // MUTATORS
             if (ModsConfig.OdysseyActive)
             {
-                if (map.IsPlayerHome)
+                if (map.IsPlayerHome && MapDesignerMod.mod.settings.flagOdyBeta)
                 {
-                    Log.Message("Try ADd Mutator");
-                    //map.Tile.Tile.AddMutator(TileMutatorDefOf.Coast);
+                    Log.Message("Try Add Mutators");
+                    //map.Tile.Tile.Mutators.Clear();
 
-                    //map.Tile.Tile.AddMutator(TileMutatorDefOf.RiverDelta);
+                    List<TileMutatorDef> existingMutators = map.Tile.Tile.Mutators.ToList();
+                    foreach(TileMutatorDef mutDef in existingMutators)
+                    {
+                        map.Tile.Tile.RemoveMutator(mutDef);
+                    }
 
+                    Dictionary<string, string> selectedMuts = MapDesignerMod.mod.settings.selectedMutators;
+
+                    foreach(KeyValuePair<string, string> cat in selectedMuts)
+                    {
+                        TileMutatorDef selMut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(cat.Value);
+                        if (selMut != ZmdDefOf.ZMD_NoMutator)
+                        {
+                            map.Tile.Tile.AddMutator(selMut);
+                        }
+                    }
                 }
             }
         }

@@ -125,6 +125,7 @@ namespace MapDesigner
 
         // Odyssey
         public Dictionary<string, string> selectedMutators = new Dictionary<string, string>();
+        public bool flagOdyBeta = false;
 
         // Medieval Overhaul
         public float densityMOBattlefield = 1f;
@@ -477,7 +478,7 @@ namespace MapDesigner
 
             // Odyssey
             Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value, LookMode.Value);
-
+            Scribe_Values.Look(ref flagOdyBeta, "flagOdyBeta", false);
 
             // Medieval Overhaul
             Scribe_Values.Look(ref densityMOBattlefield, "densityMOBattlefield", 1f);

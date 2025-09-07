@@ -39,6 +39,7 @@ namespace MapDesigner.UI
             GUI.color = new Color(255, 180, 0);
             outerListing.Label("ZMD_betaWarning".Translate());
             GUI.color = Color.white;
+            outerListing.CheckboxLabeled("ZMD_flagOdyBeta".Translate(), ref settings.flagOdyBeta, "ZMD_flagOdyBetaDesc".Translate());
 
             if (outerListing.ButtonText("ZMD_disableMutators".Translate()))
             {
@@ -201,14 +202,12 @@ namespace MapDesigner.UI
             return ZmdDefOf.ZMD_NoMutator;
         }
 
-
         public static void DisableAllMutators()
         {
             settings.selectedMutators.Clear();
             HelperMethods.InitSelectedMutators();
             HelperMethods.InvokeOnSettingsChanged();
         }
-
 
     }
 }
