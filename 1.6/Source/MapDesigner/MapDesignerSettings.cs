@@ -124,7 +124,7 @@ namespace MapDesigner
         public float pollutionLevel = 1f;
 
         // Odyssey
-        public Dictionary<string, TileMutatorDef> selectedMutators = new Dictionary<string, TileMutatorDef>();
+        public Dictionary<string, string> selectedMutators = new Dictionary<string, string>();
 
         // Medieval Overhaul
         public float densityMOBattlefield = 1f;
@@ -476,7 +476,7 @@ namespace MapDesigner
             Scribe_Values.Look(ref pollutionLevel, "pollutionLevel", 1f);
 
             // Odyssey
-            Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value, LookMode.Def);
+            Scribe_Collections.Look(ref selectedMutators, "selectedMutators", LookMode.Value, LookMode.Value);
 
 
             // Medieval Overhaul

@@ -1,11 +1,12 @@
-﻿using BiomesCore.DefModExtensions;
-using BiomesCore;
+﻿using BiomesCore;
+using BiomesCore.DefModExtensions;
 using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -201,32 +202,7 @@ namespace MapDesigner
             {
                 try
                 {
-                    if (settings.selectedMutators.EnumerableNullOrEmpty())
-                    {
-                        settings.selectedMutators = new Dictionary<string, TileMutatorDef>();
-                    }
-
-                    List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
-
-                    List<string> allCategories = new List<string>();
-                    foreach (TileMutatorDef item in allMutators)
-                    {
-                        foreach (string cat in item.categories)
-                        {
-                            if (!allCategories.Contains(cat))
-                            {
-                                allCategories.Add(cat);
-                            }
-                        }
-                    }
-
-                    foreach (string cat in allCategories)
-                    {
-                        if (!settings.selectedMutators.ContainsKey(cat))
-                        {
-                            settings.selectedMutators.Add(cat, ZmdDefOf.ZMD_NoMutator);
-                        }
-                    }
+                    InitSelectedMutators();
                 }
                 catch
                 {
@@ -235,6 +211,35 @@ namespace MapDesigner
             }
         }
 
+
+        public static void InitSelectedMutators()
+        {
+            Dictionary<string, string> selMutDict = new Dictionary<string, string>();
+
+            List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
+
+            List<string> allCategories = new List<string>();
+            foreach (TileMutatorDef item in allMutators)
+            {
+                foreach (string cat in item.categories)
+                {
+                    if (!allCategories.Contains(cat))
+                    {
+                        allCategories.Add(cat);
+                    }
+                }
+            }
+
+            foreach (string cat in allCategories)
+            {
+                if (!selMutDict.ContainsKey(cat))
+                {
+                    selMutDict.Add(cat, ZmdDefOf.ZMD_NoMutator.defName);
+                }
+            }
+
+            MapDesignerMod.mod.settings.selectedMutators = selMutDict;
+        }
 
         public static void ApplyBiomeSettings()
         {

@@ -81,14 +81,25 @@ namespace MapDesigner.UI
                 if (listing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
                 {
                     List<FloatMenuOption> mutOptionList = new List<FloatMenuOption>();
+
+                    // add "none" mutator
+                    mutOptionList.Add(new FloatMenuOption(ZmdDefOf.ZMD_NoMutator.label, delegate
+                    {
+                        //AddSelectedMutator(mut);
+                        settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
+                        HelperMethods.InvokeOnSettingsChanged();
+                        SyncSelectedMutators(ZmdDefOf.ZMD_NoMutator, cat);
+                    }));
+
+
                     foreach (TileMutatorDef mut in catMuts)
                     {
                         mutOptionList.Add(new FloatMenuOption(mut.label, delegate
                         {
                             //AddSelectedMutator(mut);
-                            settings.selectedMutators[cat] = mut;
+                            settings.selectedMutators[cat] = mut.defName;
                             HelperMethods.InvokeOnSettingsChanged();
-                            SyncSelectedMutators(mut);
+                            SyncSelectedMutators(mut, cat);
                         }));
                     }
                     Find.WindowStack.Add(new FloatMenu(mutOptionList));
@@ -103,45 +114,69 @@ namespace MapDesigner.UI
         }
 
 
-        public static void SyncSelectedMutators(TileMutatorDef mut)
+        public static void SyncSelectedMutators(TileMutatorDef mut, string category)
         {
-            //// get the list of mutators
-            //List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
+            // get the list of mutators
+            List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
 
-            ////get the list of categories
-            //List<string> allCategories = new List<string>();
-            //foreach (TileMutatorDef item in allMutators)
-            //{
-            //    foreach (string cat in item.categories)
-            //    {
-            //        if (!allCategories.Contains(cat))
-            //        {
-            //            allCategories.Add(cat);
-            //        }
-            //    }
-            //}
+            //get the list of categories
+            List<string> allCategories = new List<string>();
+            foreach (TileMutatorDef item in allMutators)
+            {
+                foreach (string cat in item.categories)
+                {
+                    if (!allCategories.Contains(cat))
+                    {
+                        allCategories.Add(cat);
+                    }
+                }
+            }
 
-            //// disable mutators with conflicting categories
-            //foreach (string cat in allCategories)
-            //{
-            //    if (settings.selectedMutators[cat].categories.Any(e => mut.categories.Contains(e)))
-            //    {
-            //        settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator;
+            // if "none" is selected, deselect anything else that shares a category
+            if (mut == ZmdDefOf.ZMD_NoMutator)
+            {
+                foreach (string cat in allCategories)
+                {
+                    TileMutatorDef existingMut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(settings.selectedMutators[cat]);
+                    if (existingMut != null)
+                    {
+                        if (existingMut.categories.Any(e => e == category))
+                        {
+                            settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
 
-            //    }
+                        }
+                    }
+                }
 
-            //}
+            }
+
+            
+
+            // disable mutators with conflicting categories
+            foreach (string cat in allCategories)
+            {
+                TileMutatorDef existingMut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(settings.selectedMutators[cat]);
+                if (existingMut != null)
+                {
+                    if (existingMut.categories.Any(e => mut.categories.Contains(e)))
+                    {
+                        settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
+
+                    }
+                }
+            }
+
 
             // everything syncs to the newly selected mutator
             foreach (string c in mut.categories)
             {
-                settings.selectedMutators[c] = mut;
+                settings.selectedMutators[c] = mut.defName;
             }
 
             // remove mutatores that conflict with override categories
             foreach (string c in mut.overrideCategories)
             {
-                settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator;
+                settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator.defName;
             }
         }
 
@@ -153,7 +188,13 @@ namespace MapDesigner.UI
             {
                 if (settings.selectedMutators.ContainsKey(cat))
                 {
-                    return settings.selectedMutators[cat];
+                    TileMutatorDef mut;
+                    mut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(settings.selectedMutators[cat]);
+                    if(mut != null)
+                    {
+                        return mut;
+                    }
+                    //return settings.selectedMutators[cat];
                 }
             }
            
@@ -164,6 +205,7 @@ namespace MapDesigner.UI
         public static void DisableAllMutators()
         {
             settings.selectedMutators.Clear();
+            HelperMethods.InitSelectedMutators();
             HelperMethods.InvokeOnSettingsChanged();
         }
 
