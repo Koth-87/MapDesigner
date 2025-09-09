@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MapDesigner.UI;
 using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Noise;
+using static RimWorld.Planet.SurfaceTile;
 
 namespace MapDesigner.Patches
 {
@@ -24,7 +26,6 @@ namespace MapDesigner.Patches
             HelperMethods.ApplyBiomeSettings();
             MapGenSize.mapgensize = map.Size;
 
-
             // MUTATORS
             if (ModsConfig.OdysseyActive)
             {
@@ -34,20 +35,41 @@ namespace MapDesigner.Patches
                     //map.Tile.Tile.Mutators.Clear();
 
                     List<TileMutatorDef> existingMutators = map.Tile.Tile.Mutators.ToList();
-                    foreach(TileMutatorDef mutDef in existingMutators)
+                    foreach (TileMutatorDef mutDef in existingMutators)
                     {
                         map.Tile.Tile.RemoveMutator(mutDef);
                     }
 
                     Dictionary<string, string> selectedMuts = MapDesignerMod.mod.settings.selectedMutators;
-
-                    foreach(KeyValuePair<string, string> cat in selectedMuts)
+                    foreach (KeyValuePair<string, string> cat in selectedMuts)
                     {
                         TileMutatorDef selMut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(cat.Value);
                         if (selMut != ZmdDefOf.ZMD_NoMutator)
                         {
-                            map.Tile.Tile.AddMutator(selMut);
+                            if(cat.Key == "River")
+                            {
+                                SurfaceTile surfaceTile = map.Tile.Tile as SurfaceTile;
+                                if (surfaceTile != null)
+                                {
+                                    if (surfaceTile.potentialRivers.Count > 0)
+                                    { 
+                                        map.Tile.Tile.AddMutator(selMut);
+                                    }
+                                }
+                            }
+
+                            else
+                            {
+                                map.Tile.Tile.AddMutator(selMut);
+                            }
+
                         }
+                        
+                    }
+
+                    foreach (TileMutatorDef mutator in map.TileInfo.Mutators)
+                    {
+                        mutator.Worker?.Init(map);
                     }
                 }
             }

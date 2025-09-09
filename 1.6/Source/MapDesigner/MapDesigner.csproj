@@ -88,6 +88,7 @@
     <Compile Include="Feature\NatIsland.cs" />
     <Compile Include="Patches\AnimaTreePatch.cs" />
     <Compile Include="Patches\CaveSettingsPatch.cs" />
+    <Compile Include="Patches\TileMutatorPatch.cs" />
     <Compile Include="Patches\CoastPatches.cs" />
     <Compile Include="Patches\HarmonyPatches.cs" />
     <Compile Include="Patches\BiotechPatches.cs" />

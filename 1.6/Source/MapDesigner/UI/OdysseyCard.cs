@@ -11,7 +11,6 @@ using Verse.Noise;
 
 namespace MapDesigner.UI
 {
-
     public static class OdysseyCard
     {
         public static MapDesignerSettings settings = MapDesignerMod.mod.settings;
@@ -27,10 +26,7 @@ namespace MapDesigner.UI
 
             // to correctly initialize scrollview height
             float height = 500f;
-            //if (settings.flagHillRadial)
-            //{
-            //    height += 100f;
-            //}
+
             Listing_Standard outerListing = new Listing_Standard();
             outerListing.Begin(rect);
 
@@ -92,7 +88,6 @@ namespace MapDesigner.UI
                         SyncSelectedMutators(ZmdDefOf.ZMD_NoMutator, cat);
                     }));
 
-
                     foreach (TileMutatorDef mut in catMuts)
                     {
                         mutOptionList.Add(new FloatMenuOption(mut.label, delegate
@@ -113,7 +108,6 @@ namespace MapDesigner.UI
             outerListing.End();
             HelperMethods.EndChangeCheck();
         }
-
 
         public static void SyncSelectedMutators(TileMutatorDef mut, string category)
         {
@@ -148,9 +142,7 @@ namespace MapDesigner.UI
                         }
                     }
                 }
-
             }
-
             
 
             // disable mutators with conflicting categories
@@ -162,11 +154,9 @@ namespace MapDesigner.UI
                     if (existingMut.categories.Any(e => mut.categories.Contains(e)))
                     {
                         settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
-
                     }
                 }
             }
-
 
             // everything syncs to the newly selected mutator
             foreach (string c in mut.categories)
@@ -180,8 +170,6 @@ namespace MapDesigner.UI
                 settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator.defName;
             }
         }
-
-
         public static TileMutatorDef GetSelectedMutatorByCategory(string cat)
         {
             // gets the currently selected mutator for a given category, if any
@@ -198,7 +186,6 @@ namespace MapDesigner.UI
                     //return settings.selectedMutators[cat];
                 }
             }
-           
             return ZmdDefOf.ZMD_NoMutator;
         }
 
