@@ -37,74 +37,78 @@ namespace MapDesigner.UI
             GUI.color = Color.white;
             outerListing.CheckboxLabeled("ZMD_flagOdyBeta".Translate(), ref settings.flagOdyBeta, "ZMD_flagOdyBetaDesc".Translate());
 
-            if (outerListing.ButtonText("ZMD_disableMutators".Translate()))
-            {
-                DisableAllMutators();
-            }
 
-            // get the list of mutators
-            List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
-
-            //get the list of categories
-            List<string> allCategories = new List<string>();
-            foreach (TileMutatorDef item in allMutators)
+            if (settings.flagOdyBeta)
             {
-                foreach (string cat in item.categories)
+
+                if (outerListing.ButtonText("ZMD_disableMutators".Translate()))
                 {
-                    if (!allCategories.Contains(cat))
-                    {
-                        allCategories.Add(cat);
-                    }
+                    DisableAllMutators();
                 }
-            }
 
-            allCategories.SortBy(c => c);
+                // get the list of mutators
+                List<TileMutatorDef> allMutators = DefDatabase<TileMutatorDef>.AllDefsListForReading;
 
-            //make the scroll window
-            Rect windowRect = outerListing.GetRect(rect2.height - outerListing.CurHeight).ContractedBy(4f);
-
-            Rect viewRect = new Rect(0f, 0f, 400f, 100f + 29f * allCategories.Count());
-
-            Widgets.BeginScrollView(windowRect, ref scrollPosition, viewRect, true);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            //make the dropdown menus
-            foreach (string cat in allCategories)
-            {
-                List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c == cat)).ToList();
-
-                if (listing.ButtonTextLabeled(cat, GetSelectedMutatorByCategory(cat).label))
+                //get the list of categories
+                List<string> allCategories = new List<string>();
+                foreach (TileMutatorDef item in allMutators)
                 {
-                    List<FloatMenuOption> mutOptionList = new List<FloatMenuOption>();
-
-                    // add "none" mutator
-                    mutOptionList.Add(new FloatMenuOption(ZmdDefOf.ZMD_NoMutator.label, delegate
+                    foreach (string cat in item.categories)
                     {
-                        //AddSelectedMutator(mut);
-                        settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
-                        HelperMethods.InvokeOnSettingsChanged();
-                        SyncSelectedMutators(ZmdDefOf.ZMD_NoMutator, cat);
-                    }));
-
-                    foreach (TileMutatorDef mut in catMuts)
-                    {
-                        mutOptionList.Add(new FloatMenuOption(mut.label, delegate
+                        if (!allCategories.Contains(cat))
                         {
-                            //AddSelectedMutator(mut);
-                            settings.selectedMutators[cat] = mut.defName;
-                            HelperMethods.InvokeOnSettingsChanged();
-                            SyncSelectedMutators(mut, cat);
-                        }));
+                            allCategories.Add(cat);
+                        }
                     }
-                    Find.WindowStack.Add(new FloatMenu(mutOptionList));
                 }
-                
+
+                allCategories.SortBy(c => c);
+
+                //make the scroll window
+                Rect windowRect = outerListing.GetRect(rect2.height - outerListing.CurHeight).ContractedBy(4f);
+
+                Rect viewRect = new Rect(0f, 0f, 400f, 100f + 29f * allCategories.Count());
+
+                Widgets.BeginScrollView(windowRect, ref scrollPosition, viewRect, true);
+
+                Listing_Standard listing = new Listing_Standard();
+                listing.Begin(viewRect);
+
+                //make the dropdown menus
+                foreach (string cat in allCategories)
+                {
+                    List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c == cat)).ToList();
+
+                    if (listing.ButtonTextLabeled(cat, GetMutatorNameByCat(cat)))
+                    {
+                        List<FloatMenuOption> mutOptionList = new List<FloatMenuOption>();
+
+                        // add "none" mutator
+                        mutOptionList.Add(new FloatMenuOption(ZmdDefOf.ZMD_NoMutator.label, delegate
+                        {
+                            settings.selectedMutators[cat] = ZmdDefOf.ZMD_NoMutator.defName;
+                            HelperMethods.InvokeOnSettingsChanged();
+                            SyncSelectedMutators(ZmdDefOf.ZMD_NoMutator, cat);
+                        }));
+
+                        foreach (TileMutatorDef mut in catMuts)
+                        {
+                            mutOptionList.Add(new FloatMenuOption(mut.label, delegate
+                            {
+                                settings.selectedMutators[cat] = mut.defName;
+                                HelperMethods.InvokeOnSettingsChanged();
+                                SyncSelectedMutators(mut, cat);
+                            }));
+                        }
+                        Find.WindowStack.Add(new FloatMenu(mutOptionList));
+                    }
+
+                }
+
+                listing.End();
+                Widgets.EndScrollView();
             }
 
-            listing.End();
-            Widgets.EndScrollView();
             outerListing.End();
             HelperMethods.EndChangeCheck();
         }
@@ -170,7 +174,8 @@ namespace MapDesigner.UI
                 settings.selectedMutators[c] = ZmdDefOf.ZMD_NoMutator.defName;
             }
         }
-        public static TileMutatorDef GetSelectedMutatorByCategory(string cat)
+
+        public static string GetMutatorNameByCat(string cat)
         {
             // gets the currently selected mutator for a given category, if any
             if (!settings.selectedMutators.NullOrEmpty())
@@ -181,12 +186,13 @@ namespace MapDesigner.UI
                     mut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(settings.selectedMutators[cat]);
                     if(mut != null)
                     {
-                        return mut;
+                        return mut.label;
                     }
-                    //return settings.selectedMutators[cat];
                 }
             }
-            return ZmdDefOf.ZMD_NoMutator;
+            //return TileMutatorDefOf.Fjord.label;
+            return ZmdDefOf.ZMD_NoMutator.label;
+
         }
 
         public static void DisableAllMutators()

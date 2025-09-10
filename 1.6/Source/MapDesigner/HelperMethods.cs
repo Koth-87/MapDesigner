@@ -695,7 +695,18 @@ namespace MapDesigner
             return output;
         }
 
+        public static string DictToString(this Dictionary<string, string> dict)
+        {
+            string output = "";
 
+            foreach (var entry in dict)
+            {
+                output += entry.Key + "-" + entry.Value + ",";
+            }
+            output += ";";
+
+            return output;
+        }
 
     }
 }

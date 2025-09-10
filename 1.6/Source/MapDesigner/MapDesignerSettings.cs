@@ -284,10 +284,10 @@ namespace MapDesigner
                 {
                     configString += field.Name + "=" + HelperMethods.DictToString((Dictionary<string, bool>)field.GetValue(MapDesignerMod.mod.settings));
                 }
-                //else if (field.Name == "selectedMutators")
-                //{
-                //    configString += field.Name + "=" + HelperMethods.DictToString((Dictionary<string, bool>)field.GetValue(MapDesignerMod.mod.settings));
-                //}
+                else if (field.Name == "selectedMutators")
+                {
+                    configString += field.Name + "=" + HelperMethods.DictToString((Dictionary<string, string>)field.GetValue(MapDesignerMod.mod.settings));
+                }
                 else if(!toIgnore.Contains(field.Name))
                 {
                     configString += field.Name + "=" + field.GetValue(MapDesignerMod.mod.settings).ToString() + ";";
