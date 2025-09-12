@@ -46,25 +46,33 @@ namespace MapDesigner.Patches
                         TileMutatorDef selMut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(cat.Value);
                         if (selMut != ZmdDefOf.ZMD_NoMutator)
                         {
-                            if(cat.Key == "River")
+                            if(selMut.categories.Contains("River"))
                             {
                                 SurfaceTile surfaceTile = map.Tile.Tile as SurfaceTile;
                                 if (surfaceTile != null)
                                 {
-                                    if (surfaceTile.potentialRivers.Count > 0)
-                                    { 
-                                        map.Tile.Tile.AddMutator(selMut);
+                                    if (!surfaceTile.Rivers.NullOrEmpty())
+                                    {
+                                        if (selMut.defName == "RiverDelta")
+                                        {
+                                            if (map.Tile.Tile.IsCoastal)
+                                            {
+                                                map.Tile.Tile.AddMutator(selMut);
+                                                Log.Message("Adding River Delta");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            map.Tile.Tile.AddMutator(selMut);
+                                        }
                                     }
                                 }
                             }
-
                             else
                             {
                                 map.Tile.Tile.AddMutator(selMut);
                             }
-
                         }
-                        
                     }
 
                     foreach (TileMutatorDef mutator in map.TileInfo.Mutators)

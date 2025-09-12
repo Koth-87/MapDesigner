@@ -44,6 +44,7 @@ namespace MapDesigner.Patches
                 case CoastDirection.West:
                     __result = 0;
                     break;
+
             }
         }
     }

@@ -78,6 +78,7 @@ namespace MapDesigner.UI
                 foreach (string cat in allCategories)
                 {
                     List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c == cat)).ToList();
+                    catMuts.SortBy(c => c.label);
 
                     if (listing.ButtonTextLabeled(cat, GetMutatorNameByCat(cat)))
                     {
