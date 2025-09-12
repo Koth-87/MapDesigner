@@ -58,7 +58,6 @@ namespace MapDesigner.Patches
                                             if (map.Tile.Tile.IsCoastal)
                                             {
                                                 map.Tile.Tile.AddMutator(selMut);
-                                                Log.Message("Adding River Delta");
                                             }
                                         }
                                         else

@@ -327,12 +327,12 @@
 <ZMD_odysseyTabInfo>Enable or disable special features. This will apply only to your home map.\n\nYou can select max 1 from each category. Some features are part of multiple categories.\n\nRiver features require a pre-existing river, and the river delta also requires a pre-existing coast.</ZMD_odysseyTabInfo>
 <ZMD_betaWarning>THIS TAB IS IN BETA</ZMD_betaWarning>
 <ZMD_flagOdyBeta>Opt into the beta</ZMD_flagOdyBeta>
-<ZMD_flagOdyBetaDesc>If opted out, the code to change your map is disabled.</ZMD_flagOdyBetaDesc>
-<ZMD_odyKnownIssues>KNOWN ISSUES:\n
+<ZMD_flagOdyBetaDesc>If opted out, the code to change your map is disabled.\n\nKNOWN ISSUES:\n
 1. Selected features may not save if you restart Rimworld\n
-2. Selected features may not be correctly limited to home tile
-3. When used with Map Preview, any tiles you preview before generating your home map may be treated as a "home" tile with added features. EVEN IF YOU OPT OUT OF THE BETA AFTER PREVIEWING.</ZMD_odyKnownIssues>
-
+2. Selected features may not be correctly limited to home tile\n
+3. When used with Map Preview, any tiles you preview before generating your home map may be treated as a "home" tile with added features. Even if you opt out of the beta after previewing.\n</ZMD_flagOdyBetaDesc>
+4. Some combinations of features may be incompatible, even if the combo is selectable.\n
+5. Selected features will override any vanilla features of the tile, including vanilla features like "Mountain"
 <ZMD_categories>Categories: </ZMD_categories>
 <ZMD_disableMutators>Disable All</ZMD_disableMutators>
 

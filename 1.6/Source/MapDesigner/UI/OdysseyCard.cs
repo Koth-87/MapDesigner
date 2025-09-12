@@ -35,8 +35,15 @@ namespace MapDesigner.UI
             GUI.color = new Color(255, 180, 0);
             outerListing.Label("ZMD_betaWarning".Translate());
             GUI.color = Color.white;
-            outerListing.CheckboxLabeled("ZMD_flagOdyBeta".Translate(), ref settings.flagOdyBeta, "ZMD_flagOdyBetaDesc".Translate());
+            Rect betaFlagRect = outerListing.GetRect(30f, 0.4f);
+            Widgets.CheckboxLabeled(betaFlagRect, "ZMD_flagOdyBeta".Translate(), ref settings.flagOdyBeta);
+            if (Mouse.IsOver(betaFlagRect))
+            {
+                Widgets.DrawHighlight(betaFlagRect);
+            }
+            TooltipHandler.TipRegion(betaFlagRect, "ZMD_flagOdyBetaDesc".Translate());
 
+            //outerListing.CheckboxLabeled("ZMD_flagOdyBeta".Translate(), ref settings.flagOdyBeta, "ZMD_flagOdyBetaDesc".Translate());
 
             if (settings.flagOdyBeta)
             {
@@ -67,7 +74,7 @@ namespace MapDesigner.UI
                 //make the scroll window
                 Rect windowRect = outerListing.GetRect(rect2.height - outerListing.CurHeight).ContractedBy(4f);
 
-                Rect viewRect = new Rect(0f, 0f, 400f, 100f + 29f * allCategories.Count());
+                Rect viewRect = new Rect(0f, 0f, 725f, 100f + 44f * allCategories.Count());
 
                 Widgets.BeginScrollView(windowRect, ref scrollPosition, viewRect, true);
 
@@ -80,7 +87,13 @@ namespace MapDesigner.UI
                     List<TileMutatorDef> catMuts = allMutators.Where(m => m.categories.Any(c => c == cat)).ToList();
                     catMuts.SortBy(c => c.label);
 
-                    if (listing.ButtonTextLabeled(cat, GetMutatorNameByCat(cat)))
+                    Rect catRect = listing.GetRect(43f);
+                    Rect buttonRect = catRect.LeftHalf().ContractedBy(10f, 0f);
+                    Listing_Standard buttonListing = new Listing_Standard();
+                    buttonListing.Begin(buttonRect);
+                    TileMutatorDef selCatMut = GetMutatorByCat(cat);
+
+                    if (buttonListing.ButtonTextLabeled(cat, selCatMut.label, TextAnchor.MiddleLeft, null, selCatMut.label))
                     {
                         List<FloatMenuOption> mutOptionList = new List<FloatMenuOption>();
 
@@ -103,11 +116,21 @@ namespace MapDesigner.UI
                         }
                         Find.WindowStack.Add(new FloatMenu(mutOptionList));
                     }
+                    buttonListing.End();
 
+                    Rect labelRect = catRect.RightHalf();
+                    Listing_Standard labelListing = new Listing_Standard();
+                    labelListing.Begin(labelRect);
+                    labelListing.Label(selCatMut.description);
+                    labelListing.End();
                 }
 
                 listing.End();
                 Widgets.EndScrollView();
+            }
+            else
+            {
+                outerListing.Label("ZMD_flagOdyBetaDesc".Translate());
             }
 
             outerListing.End();
@@ -176,7 +199,7 @@ namespace MapDesigner.UI
             }
         }
 
-        public static string GetMutatorNameByCat(string cat)
+        public static TileMutatorDef GetMutatorByCat(string cat)
         {
             // gets the currently selected mutator for a given category, if any
             if (!settings.selectedMutators.NullOrEmpty())
@@ -187,12 +210,12 @@ namespace MapDesigner.UI
                     mut = DefDatabase<TileMutatorDef>.GetNamedSilentFail(settings.selectedMutators[cat]);
                     if(mut != null)
                     {
-                        return mut.label;
+                        return mut;
                     }
                 }
             }
             //return TileMutatorDefOf.Fjord.label;
-            return ZmdDefOf.ZMD_NoMutator.label;
+            return ZmdDefOf.ZMD_NoMutator;
 
         }
 
